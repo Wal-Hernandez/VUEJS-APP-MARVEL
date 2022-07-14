@@ -44,7 +44,6 @@ export default {
         description: this.description,
         thumbnail: this.checkUrl() ? this.url : this.predeterminada,
       });
-      console.log(this.checkUrl());
       alert("created");
     },
   },

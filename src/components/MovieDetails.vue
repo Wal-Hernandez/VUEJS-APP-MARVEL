@@ -43,7 +43,6 @@ export default {
     let id = this.$route.params.id + "detail-vue";
     let dataDB = JSON.parse(localStorage.getItem(id));
     if (dataDB) {
-      console.log("val3");
       this.loading = false;
       this.$store.state.heroeDetails = dataDB;
     }

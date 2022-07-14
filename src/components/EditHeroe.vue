@@ -49,7 +49,6 @@ export default {
         description: !!this.description ? this.description : heroe.description,
         thumbnail: !!this.url ? this.url : heroe.thumbnail,
       };
-      console.log("2");
       this.$store.dispatch("PUT_HEROE", heroe);
 
       alert("updated");
