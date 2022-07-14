@@ -15,13 +15,17 @@ export default createStore({
       state.heroes = payload;
       localStorage.setItem('heroes-vue', JSON.stringify(payload))
   },
-    LOAD_HEROE_DETAILS: (state, payload) => (state.heroeDetails = payload[0]),
+    LOAD_HEROE_DETAILS: (state, payload) => {
+      state.heroeDetails = payload[0]
+      localStorage.setItem(`${payload[0].id}detail-vue`, JSON.stringify(state.heroeDetails))
+    },
     PUSH_HEROE: (state, payload) => {
     state.heroes.unshift(payload);
     localStorage.setItem('heroes-vue', JSON.stringify(state.heroes))
     return true  
     },
     SEARCH_HEROE:(state,payload) => {state.heroes = payload},
+    UPDATE_HEROE:(state,payload) => {state.heroes = payload},
   },
   actions: {
     GET_HEROES: (state) => {
@@ -36,51 +40,58 @@ export default createStore({
           return true;
         });
     },
-    GET_DETAILS: (state, payload) => {
-      if(payload[0] === "L"){
-        let dataDB = JSON.parse(localStorage.getItem('heroes-vue'));
-        let heroeDB = dataDB.find(e => e.id === payload);
-          console.log(heroeDB)
-          if(heroeDB) state.commit("LOAD_HEROE_DETAILS",[heroeDB]);
-       
-        return }
-      else{
-      fetch(
-        `https://gateway.marvel.com/v1/public/characters/${payload}?ts=1&apikey=d401b44dea1498441c907f9720457f43&hash=3b6d145bf3beaa3f11e22968f65bf749`
-      )
-        .then((res) => {
-          console.log(res, "FETCH");
-          return res.json();
-        })
-        .then((response) => {
-          state.commit("LOAD_HEROE_DETAILS", response.data.results);
-          return true;
-        });
+    GET_DETAILS: function(state, payload){
+      
+      let detailExist = JSON.parse(localStorage.getItem(`${payload}detail-vue`));
+      console.log(detailExist)
+      if(!detailExist){
+        console.log(12346)
+        if(payload[0] === "L"){
+          let dataDB = JSON.parse(localStorage.getItem('heroes-vue'));
+          let heroeDB = dataDB.find(e => e.id === payload);
+            console.log(heroeDB)
+            if(heroeDB) state.commit("LOAD_HEROE_DETAILS",[heroeDB]);
+         
+          return }
+        else{
+        fetch(
+          `https://gateway.marvel.com/v1/public/characters/${payload}?ts=1&apikey=d401b44dea1498441c907f9720457f43&hash=3b6d145bf3beaa3f11e22968f65bf749`
+        )
+          .then((res) => {
+            console.log(res, "FETCH");
+            return res.json();
+          })
+          .then((response) => {
+            state.commit("LOAD_HEROE_DETAILS", response.data.results);
+            return true;
+          });
+        }
+      }else{
+        this.state.heroeDetails = detailExist
       }
+  
     },
     PUT_HEROE: function(state, payload){
-      const found = this.state.heroes.find((element) => element.id === payload.id);
-      console.log(found)
-      if (found) return false;
-      else 
+      console.log(payload)
+      const found = this.state.heroes.findIndex((element) => element.id == payload.id);
       
-      state.commit("PUSH_HEROE", payload);
-
-
+      if (found !== -1){
+        console.log(2)
+        this.state.heroes[found] = payload  
+        console.log(22)
+        this.state.heroeDetails = payload
+        localStorage.setItem('heroes-vue', JSON.stringify(this.state.heroes))
+        localStorage.setItem(`${payload.id}detail-vue`, JSON.stringify(payload))
+      }else {
+        console.log(3)
+      state.commit("PUSH_HEROE", payload);}
       return true;
     },
     SEARCH_HEROE: function(state, payload){
       const allHeroes = JSON.parse(localStorage.getItem('heroes-vue'))
-      const search = allHeroes.filter((element) => element.name.includes(payload));
+      const search = allHeroes.filter((element) => element.name.toLowerCase().includes(payload.toLowerCase()));
       state.commit("SEARCH_HEROE", search);
       return true;
     },
-    EDIT_HEROE: function(state, payload){
-      for (let i = 0; i < this.state.heroes.length; i++) {
-        if(element.id === payload.id){
-          element = payload
-        }
-      }
-    }
   },
 });

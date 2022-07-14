@@ -2,7 +2,7 @@
 <div class="card">
 <div class="buttons">
 
-<button class="button1" @click="editHeroe" >EDITAR</button>
+<router-link :to="{name:'detail',params:{id: id}}" >   <button class="button1" @click="editHeroe" >EDITAR</button></router-link>
 <button class="button2" @click="deleteHeroe(index)">ELIMINAR</button>
 </div>
 <router-link :to="{name:'detail',params:{id: id}}" >        
@@ -22,10 +22,8 @@ export default {
   
   deleteHeroe: function(index){
   this.$store.state.heroes.splice(index,1);
+  localStorage.setItem('heroes-vue', JSON.stringify(this.$store.state.heroes))
   },
-  editHeroe: function(){
-  },
-
 
   },
    
