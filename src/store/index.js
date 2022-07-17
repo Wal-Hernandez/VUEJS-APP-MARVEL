@@ -37,13 +37,13 @@ export default createStore({
   actions: {
     GET_HEROES: (state) => {
       fetch(
-        `https://gateway.marvel.com/v1/public/characters?ts=1&apikey=d401b44dea1498441c907f9720457f43&hash=3b6d145bf3beaa3f11e22968f65bf749`
+        'api/heroes/getHeroes'
       )
         .then((res) => {
           return res.json();
         })
         .then((response) => {
-          state.commit("LOAD_HEROES", response.data.results);
+          state.commit("LOAD_HEROES", response);
           return true;
         });
     },
